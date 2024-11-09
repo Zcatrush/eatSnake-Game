@@ -101,6 +101,7 @@ void movesnake(snake* head) {
     if (!head)return;//防止空指针
     if (_kbhit()) {
         char cmd = _getch();
+       
         switch (cmd) {
         case 'w': 
             if (direction_x ==0) { direction_x = -1; direction_y = 0; }
@@ -166,6 +167,7 @@ void drawNewMap(snake* head) {
         }
     }
     cout << "当前分数为：" << score << endl;
+    cout << "当前等级为：" << score/5 << endl;
     for (i = 0; i < length; i++) {
         for (j = 0; j < width; j++) {
             if (a[i][j] == 1)cout << "●";
@@ -205,7 +207,7 @@ void game() {
     drawNewMap(Head);
     do {
 
-        sleep(1);
+        usleep(1000000-10000*score%500000);
         system("clear");
         movesnake(Head);
         drawNewMap(Head);
@@ -219,33 +221,40 @@ void game() {
 }
 int main(){
     
-    /*int choice = 0;
+    int choice = 0;
    
-    while (1) {*/
+    
        
         
         //显示初始菜单
-    //    showMenu();
-    //    if (_kbhit()) {
+        
+        
+        system("clear");      
+        showMenu();
+       while(1){
+       if (_kbhit()) {
 
-    //        choice = _getch() - '0';//根据按键选择选项
-    //        
-    //        switch (choice) {
-    //        case 1:
-    //        case 2:
-    //            system("pause"); return 0; break;
-    //        default:
-    //            break;
-    //        }
-    //    }
-    //    system("cls");
-    //    
-    //        
-    //    
-    //}
-    //
-        game();
-        system("pause"); 
-        return 0;
+           choice = _getch() - '0';//根据按键选择选项
+           
+           switch (choice) {
+           case 1:
+           system("clear");game();system("pause");break;
+            
+           case 2:
+               system("clear");system("pause"); return 0; break;
+           default:
+               break;
+           }
+           }
+        }
+       
+      
+       
+           
+       
+    
+    
+         return 0;
+        
     
 }
