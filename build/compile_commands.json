@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/zcatrush/vsProjects/eatSnake/build",
+  "command": "/usr/bin/c++   -g -o CMakeFiles/eatSnake.dir/src/main.cpp.o -c /home/zcatrush/vsProjects/eatSnake/src/main.cpp",
+  "file": "/home/zcatrush/vsProjects/eatSnake/src/main.cpp"
+}
+]

@@ -1,0 +1,3 @@
+/home/zcatrush/vsProjects/eatSnake/build/CMakeFiles/eatSnake.dir
+/home/zcatrush/vsProjects/eatSnake/build/CMakeFiles/edit_cache.dir
+/home/zcatrush/vsProjects/eatSnake/build/CMakeFiles/rebuild_cache.dir
