@@ -13,6 +13,7 @@
 using namespace std;
 int direction_x = 0, direction_y = 1;//由这两个变量控制蛇的下一步移动操作
 int score = 0;
+int speed=1000000/(score+1);
 static int star_i, star_j;
 
 int _kbhit(void) {
@@ -39,6 +40,7 @@ int _kbhit(void) {
 
     return 0;
 }
+
 char _getch(void) {
     struct termios oldt, newt;
     char ch;
@@ -51,11 +53,6 @@ char _getch(void) {
     return ch;
 }
 
-void generate_star() {
-    srand((unsigned int)time(NULL));
-    star_i = rand() % (length/5*3) + 3;
-    star_j = rand() % (width/5*3) + 3;
-}//随机生成star的位置
 class snake {
 public:
     //构造函数
@@ -67,17 +64,13 @@ public:
     int snake_i, snake_j;
     snake* next;
 };
-snake* init_snake() {
-    snake* head = new snake(0, 0);
-    snake* top = new snake(5, 6);
-    snake* mid = new snake(5, 5);
-    snake* tail = new snake(5, 4);
-    head->next = top;
-    top->next = mid;
-    mid->next = tail;
-    tail->next = NULL;
-    return(head);
-}//初始化一条长度为3的蛇，以链形式
+
+void generate_star() {
+    srand((unsigned int)time(NULL));
+    star_i = rand() % (length/5*3) + 3;
+    star_j = rand() % (width/5*3) + 3;
+}//随机生成star的位置
+
 bool isfalse(snake* nTop) {
     if (nTop->snake_i == 0 || nTop->snake_i == length-1 || nTop->snake_j == 0 || nTop->snake_j == width-1)
     {
@@ -91,60 +84,93 @@ bool isfalse(snake* nTop) {
     } 
     return false;
 }//判定游戏是否结束
+
 bool eatstar(snake* ntop) {
     if (star_i == ntop->snake_i && star_j == ntop->snake_j)return true;
     
     return false;
 }
-void movesnake(snake* head) {
-    void drawNewMap(snake * head);
-    if (!head)return;//防止空指针
-    if (_kbhit()) {
-        char cmd = _getch();
-       
-        switch (cmd) {
-        case 'w': 
-            if (direction_x ==0) { direction_x = -1; direction_y = 0; }
-            
-        break;
-        case 'a': 
-            if (direction_y == 0) { direction_x = 0; direction_y = -1; }
-           
-        break;
-        case 's': 
-            if (direction_x == 0) { direction_x = 1; direction_y = 0; }
-            
-        break;
-        case 'd': 
-            if (direction_y == 0) { direction_x = 0; direction_y = 1; }
-            
-        break;
-        default: break;
-        }
-    }//若按键，更改移动的方向
-    
+
+void updateSnake(int i,int j,snake* head,int flag){
     snake* newTop=new snake(0,0);
     newTop->snake_i = head->next->snake_i + direction_x;
     newTop->snake_j = head->next->snake_j + direction_y;
     newTop->next = head->next;
-    head->next = newTop;//插入新的结点
-    if (isfalse(newTop)) return;
+    head->next = newTop;//插入新的结点，即蛇头前进一次
+    if (isfalse(newTop)) return;//判断是否碰壁
         
     else if (eatstar(newTop)) {
         score++; generate_star();
-    }//吃掉星星，重新生成一个，尾结点保留（长度加了1）
+    }//吃掉星星，重新生成一个星星，尾结点保留（长度加了1）
     
     else {
         snake* p = head->next;
         while (p->next->next) {
             p = p->next;
         }//此时p指向倒数第2个结点
-
-
         delete(p->next);
-        p->next= NULL;//删除尾结点
+        p->next= NULL;//删除尾结点，即删掉尾巴（尾巴前移了）
     }
-}
+    if(flag==0)
+        speed=1000000/(score+1);
+    else if(flag==1){speed=30000;flag=0;}
+}//实现蛇位置的一个更新
+
+
+snake* init_snake() {
+    snake* head = new snake(0, 0);
+    snake* top = new snake(5, 6);
+    snake* mid = new snake(5, 5);
+    snake* tail = new snake(5, 4);
+    head->next = top;
+    top->next = mid;
+    mid->next = tail;
+    tail->next = NULL;
+    return(head);
+}//初始化一条长度为3的蛇，以链形式
+char chh='d';
+void movesnake(snake* head) {
+    
+    int flag=0;//判断是否连续相同按键
+    if (!head)return;//防止空指针
+    if (_kbhit()) {
+        
+        char ch = _getch();//刚接收的按键
+        if(chh!=ch){
+            chh=ch;//更新前一个按键chh的值
+            flag=0;
+            switch (ch) {
+            case 'w': 
+                if (direction_x ==0) { direction_x = -1; direction_y = 0; }
+                
+            break;
+            case 'a': 
+                if (direction_y == 0) { direction_x = 0; direction_y = -1; }
+            
+            break;
+            case 's': 
+                if (direction_x == 0) { direction_x = 1; direction_y = 0; }
+                
+            break;
+            case 'd': 
+                if (direction_y == 0) { direction_x = 0; direction_y = 1; }
+                
+            break;
+            default: break;
+            }//根据按键调整方向
+            updateSnake(direction_x,direction_y,head,flag);
+        }
+   
+
+        else  {flag=1;   //若连续按下两个相同的按键，方向无需改变，flag记录一下
+                updateSnake(direction_x,direction_y,head,flag);}
+    }
+    updateSnake(direction_x,direction_y,head,flag);
+    
+    }
+    
+    
+
 
 
 
@@ -167,7 +193,7 @@ void drawNewMap(snake* head) {
         }
     }
     cout << "当前分数为：" << score << endl;
-    cout << "当前等级为：" << score/5 << endl;
+    
     for (i = 0; i < length; i++) {
         for (j = 0; j < width; j++) {
             if (a[i][j] == 1)cout << "●";
@@ -200,6 +226,7 @@ void showMenu() {
         cout << "\n";
     }
 }
+
 void game() {
     generate_star();//初始化星星   
     snake* Head;
@@ -207,7 +234,7 @@ void game() {
     drawNewMap(Head);
     do {
 
-        usleep(1000000-10000*score%500000);
+        usleep(speed);
         system("clear");
         movesnake(Head);
         drawNewMap(Head);
@@ -219,42 +246,29 @@ void game() {
     cout << endl;
     cout << "\tGAME OVER!" << endl;//蛇头碰壁，结束游戏
 }
-int main(){
-    
-    int choice = 0;
-   
-    
-       
-        
-        //显示初始菜单
-        
-        
-        system("clear");      
-        showMenu();
-       while(1){
-       if (_kbhit()) {
 
-           choice = _getch() - '0';//根据按键选择选项
-           
-           switch (choice) {
-           case 1:
-           system("clear");game();system("pause");break;
-            
-           case 2:
-               system("clear");system("pause"); return 0; break;
-           default:
-               break;
-           }
-           }
-        }
-       
-      
-       
-           
-       
-    
-    
-         return 0;
+int main(){
+
+    int choice = 0;
+    system("clear");      
+    showMenu();//显示初始菜单
+    while(1){
+    if (_kbhit()) {
+
+    choice = _getch() - '0';//根据按键选择选项
+
+    switch (choice) {
+    case 1:
+    system("clear");game();break;
+    case 2:
+    system("clear"); return 0; break;
+    default:
+        break;
+    }
+    }
+    }
+   
+            return 0;
         
     
 }
