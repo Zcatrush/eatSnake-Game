@@ -90,43 +90,10 @@ bool eatstar(snake* ntop) {
     
     return false;
 }
-<<<<<<< HEAD
+
 
 void updateSnake(int i,int j,snake* head,int flag){
-=======
-void movesnake(snake* head) {
-    void drawNewMap(snake * head);
-    if (!head)return;//防止空指针
-    if (_kbhit()) {
-        char cmd = _getch();
-        char cmd_1 = '0';
-       if(cmd_1!=cmd ){
-        switch (cmd_1) {
-        case 'w': 
-            if (direction_x ==0) { direction_x = -1; direction_y = 0; }
-            
-        break;
-        case 'a': 
-            if (direction_y == 0) { direction_x = 0; direction_y = -1; }
-           
-        break;
-        case 's': 
-            if (direction_x == 0) { direction_x = 1; direction_y = 0; }
-            
-        break;
-        case 'd': 
-            if (direction_y == 0) { direction_x = 0; direction_y = 1; }
-            
-        break;
-        default: break;
-        }
-    }//若按键，更改移动的方向
-    }
-    else{
-        direction_x=direction_x%2+direction_x;
-        direction_y=direction_y%2+direction_y;
-    }
->>>>>>> origin/master
+
     snake* newTop=new snake(0,0);
     newTop->snake_i = head->next->snake_i + direction_x;
     newTop->snake_j = head->next->snake_j + direction_y;
@@ -146,7 +113,7 @@ void movesnake(snake* head) {
         delete(p->next);
         p->next= NULL;//删除尾结点，即删掉尾巴（尾巴前移了）
     }
-<<<<<<< HEAD
+
     if(flag==0)
         speed=1000000/(score+1);
     else if(flag==1){speed=30000;flag=0;}
@@ -165,7 +132,7 @@ snake* init_snake() {
     return(head);
 }//初始化一条长度为3的蛇，以链形式
 char chh='d';
-void movesnake(snake* head) {
+void moveSnake(snake* head) {
     
     int flag=0;//判断是否连续相同按键
     if (!head)return;//防止空指针
@@ -207,10 +174,6 @@ void movesnake(snake* head) {
     
     
 
-=======
-    drawNewMap(head);
-}
->>>>>>> origin/master
 
 
 
@@ -274,13 +237,12 @@ void game() {
     drawNewMap(Head);
     do {
 
-<<<<<<< HEAD
+
         usleep(speed);
-=======
-        usleep(100000-10000*score%50000);
->>>>>>> origin/master
+
         system("clear");
-        movesnake(Head);
+        moveSnake(Head);
+        drawNewMap(Head);
         
     } while (!isfalse(Head->next));//若蛇头未碰壁，循环进行 清屏->移动蛇->打印地图 的操作
     system("clear");
